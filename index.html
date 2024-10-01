@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Weather App</h1>
+        <input type="text" id="city" placeholder="Enter city name">
+        <button id="getWeather">Get Weather</button>
+        <div id="weatherResult"></div>
+    </div>
+    <script>
+        document.getElementById('getWeather').addEventListener('click', getWeather);
+
+        async function getWeather() {
+            const city = document.getElementById('city').value;
+            const apiKey = "da02543c9ed4a7f0f05bf0119a6c778f";
+            const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+          
+
+            try {
+                const response = await fetch(apiUrl);
+                if (response.status !== 200) throw 'City not founded';
+
+                const data = await response.json();
+                console.log(data);
+                displayWeather(data);
+            } catch (error) {
+                document.getElementById('weatherResult').innerText = error;
+            }
+        }
+
+        function displayWeather(data) 
+        {
+            // const { name, main, weather } = data;               //destructuring api response if we dont want data.name insted of data.name we wright only name by commenting this
+            const result = `
+        <h2>Weather in ${data.name}</h2>
+        <p>Temperature: ${data.main.temp}°C</p>
+        <p>Condition: ${data.weather[0].description}</p>
+    `;
+            document.getElementById('weatherResult').innerHTML = result;
+        }
+
+    </script>
+</body>
+
+</html>
