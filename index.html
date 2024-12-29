@@ -22,15 +22,14 @@
 
         async function getWeather() {
             const city = document.getElementById('city').value;
-            const apiKey = "4fddb469dc125636b60f546209216fdd"; // Your API key here
+            const apiKey = "da02543c9ed4a7f0f05bf0119a6c778f";
             const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-
             try {
                 const response = await fetch(apiUrl);
                 if (response.status !== 200) throw 'City not found';
 
                 const data = await response.json();
-                console.log(data); // for debugging
+                console.log(data); 
                 displayWeather(data);
             } catch (error) {
                 document.getElementById('weatherResult').innerText = error;
