@@ -1,55 +1,104 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Weather App</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
-
 <body>
     <div class="container">
         <h1>Weather App</h1>
         <input type="text" id="city" placeholder="Enter city name">
         <button id="getWeather">Get Weather</button>
         <div id="weatherResult"></div>
+        <button id="clearWeather" class="clear-btn">Clear</button> <!-- Clear button added here -->
     </div>
+
     <script>
-        //select id  by dom
-        //i am in main branch
         document.getElementById('getWeather').addEventListener('click', getWeather);
+        document.getElementById('clearWeather').addEventListener('click', clearWeather); // Clear button functionality
 
         async function getWeather() {
             const city = document.getElementById('city').value;
-            const apiKey = "da02543c9ed4a7f0f05bf0119a6c778f";
+            const apiKey = "4fddb469dc125636b60f546209216fdd"; // Your API key here
             const apiUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
-          
 
             try {
                 const response = await fetch(apiUrl);
-                if (response.status !== 200) throw 'City not founded';
+                if (response.status !== 200) throw 'City not found';
 
                 const data = await response.json();
-                console.log(data);
+                console.log(data); // for debugging
                 displayWeather(data);
             } catch (error) {
                 document.getElementById('weatherResult').innerText = error;
             }
         }
 
-        function displayWeather(data) 
-        {
-            // const { name, main, weather } = data;               //destructuring api response if we dont want data.name insted of data.name we wright only name by commenting this
+        function displayWeather(data) {
+            const temperature = data.main.temp ? data.main.temp.toFixed(2) : 'N/A';
+            const humidity = data.main.humidity ? data.main.humidity : 'N/A';
+            const windSpeed = data.wind.speed ? data.wind.speed.toFixed(2) : 'N/A';
+            const description = data.weather[0] && data.weather[0].description ? data.weather[0].description : 'N/A';
+            const country = data.sys.country ? data.sys.country : 'N/A';
+            const dust = data.main.grnd_level ? data.main.grnd_level : 'N/A'; 
+            const visibilityMiles = data.visibility ? (data.visibility / 1609.34).toFixed(2) : 'N/A'; 
+            const sunriseTimestamp = data.sys.sunrise ? data.sys.sunrise * 1000 : 'N/A';
+            const sunsetTimestamp = data.sys.sunset ? data.sys.sunset * 1000 : 'N/A';
+            const sunriseTime = sunriseTimestamp !== 'N/A' ? new Date(sunriseTimestamp).toLocaleTimeString('en-US') : 'N/A';
+            const sunsetTime = sunsetTimestamp !== 'N/A' ? new Date(sunsetTimestamp).toLocaleTimeString('en-US') : 'N/A';
+
             const result = `
-        <h2>Weather in ${data.name}</h2>
-        <p>Temperature: ${data.main.temp}°C</p>
-        <p>Condition: ${data.weather[0].description}</p>
-    `;
+                <div class="weather-detail">
+                    <strong>Temperature:</strong> ${temperature} °C
+                    <i class="fas fa-thermometer-half temperature-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Humidity:</strong> ${humidity}%
+                    <i class="fas fa-tint humidity-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Wind Speed:</strong> ${windSpeed} m/s
+                    <i class="fas fa-wind wind-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Description:</strong> ${description}
+                    <i class="fas fa-cloud description-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Country:</strong> ${country}
+                    <i class="fas fa-flag country-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Dust Level:</strong> ${dust}
+                    <i class="fas fa-wind dust-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Visibility:</strong> ${visibilityMiles} mi
+                    <i class="fas fa-eye visibility-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Sunrise Time:</strong> ${sunriseTime}
+                    <i class="fas fa-sun sunrise-icon"></i>
+                </div>
+                <div class="weather-detail">
+                    <strong>Sunset Time:</strong> ${sunsetTime}
+                    <i class="fas fa-moon sunset-icon"></i>
+                </div>
+            `;
+            
             document.getElementById('weatherResult').innerHTML = result;
+            document.getElementById('clearWeather').style.display = 'block'; // Show the clear button
         }
 
+        function clearWeather() {
+            // Clear input field and hide weather details
+            document.getElementById('city').value = '';
+            document.getElementById('weatherResult').innerHTML = '';
+            document.getElementById('clearWeather').style.display = 'none'; // Hide the clear button
+        }
     </script>
 </body>
-
 </html>
